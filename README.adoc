@@ -1,0 +1,135 @@
+= Belcebur Authentification
+
+'''
+
+== Configure Adapters / Configurar Adaptadores
+
+=== Service Manager
+
+==== English
+Create an adapter using the service manager and indicate the name of the service.
+
+*_You can use one method or both simultaneously_*
+
+==== Español
+Crear un adaptador mediante el gestor de servicios e indicar el nombre de los servicios.
+
+_*Se puede usar un metodo o los dos simultaneamente.*_
+
+==== Example
+
+[source,php]
+----
+<?php
+return array(
+    'service_manager' => array(
+        'factories' => array(
+            'serviceName1' => function (\Zend\ServiceManager\ServiceLocatorInterface $sm) {
+                return new \DoctrineModule\Authentication\Adapter\ObjectRepository(array(
+                    'object_manager'      => $sm->get('Doctrine\ORM\EntityManager'),
+                    'identity_class'      => 'Application\Entity\User',
+                    'identity_property'   => 'email',
+                    'credential_property' => 'password',
+                    'credentialCallable'  => function ($password) {
+                        return md5($password);
+                    }
+                ));
+            },
+            'serviceName2' => => function (\Zend\ServiceManager\ServiceLocatorInterface $sm) {
+                  return new \DoctrineModule\Authentication\Adapter\ObjectRepository(array(
+                      'object_manager'      => $sm->get('Doctrine\ORM\EntityManager'),
+                      'identity_class'      => 'Application\Entity\Member',
+                      'identity_property'   => 'username',
+                      'credential_property' => 'password',
+                      'credentialCallable'  => function ($password) {
+                          return md5($password);
+                      }
+                  ));
+              },
+        ),
+    ),
+    'belcebur'        => array(
+        'belcebur-auth' => array(
+            'auth-factories' => array(
+                'sm-factories'     => array('serviceName1',serviceName2,....),
+                'config-factories' => array()
+            )
+        ),
+    ),
+);
+----
+
+=== Auto Create Service / Auto creando el Servicio
+[source,php]
+----
+ <?php
+ return array(
+     'belcebur'        => array(
+         'belcebur-auth' => array(
+             'auth-factories' => array(
+                 'sm-factories'     => array(),
+                 'config-factories' => array(
+                     'serviceName1' => array(
+                         'identity_class'      => 'Application\Entity\User',
+                         'identity_property'   => 'email',
+                         'credential_property' => 'password',
+                         'credentialCallable'  => function ($password) {
+                             return md5($password);
+                         }
+                     )
+                 ),
+             )
+         ),
+     ),
+ );
+----
+
+== Enable Module / Activar Módulo
+
+==== English
+Add to file "application.config.php" the module name *BelceburAuth*.
+
+==== Español
+Añadir al archivo "application.config.php" el nombre del módulo *BelceburAuth*.
+
+=== Example:
+
+[source,php]
+----
+<?php
+return array(
+    'modules' => array(
+        'Application',
+        'BelceburAuth'
+    ),
+);
+----
+
+== How To Use It? / ¿Como utilizarlo?
+
+=== In The Controller / En El Controller
+
+==== English
+First call to service, and then ask the identity_class indicating that applies adapter.
+
+==== Español
+Primero llamamos al servicio, y luego le pedimos el adaptador indicando el identity_class al que aplica.
+
+==== Example
+
+[source,php]
+----
+    /**
+     * @var \BelceburAuth\Service\AuthenticationFactory             $authFactory
+     * @var \DoctrineModule\Authentication\Adapter\ObjectRepository $adapter
+     * @var \Zend\Authentication\Result                             $result
+     */
+    $authAdapters = $this->getServiceLocator()->get('AuthenticationFactory');
+    $adapter      = $authAdapters->getAuthAdapter('Application\Entity\User');
+    $adapter->setIdentity($identity);
+    $adapter->setCredential($password);
+    $result = $authAdapters->authenticate($adapter);
+
+    var_dump($this->identity());
+    die;
+----
