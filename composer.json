@@ -1,0 +1,26 @@
+{
+  "name": "belcebur/belcebur-auth",
+  "type": "library",
+  "description": "Doctrine2 multiple authentification",
+  "keywords": [
+    "orm",
+    "dbal",
+    "database",
+    "auth",
+    "mysql",
+    "zf2",
+    "doctrine",
+    "authentication"
+  ],
+  "authors": [
+    {
+      "name": "David García",
+      "email": "garcia.gordo.david@gmail.com"
+    }
+  ],
+  "license": "Apache-2.0",
+  "require": {
+    "zendframework/zendframework": "2.*",
+    "doctrine/doctrine-orm-module": "0.*"
+  }
+}
