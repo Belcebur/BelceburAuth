@@ -23,5 +23,6 @@
   "require": {
     "zendframework/zendframework": "2.*",
     "doctrine/doctrine-orm-module": "0.*"
-  }
+  },
+  "autoload": {"classmap": ["./Module.php"]}
 }
