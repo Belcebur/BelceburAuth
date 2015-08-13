@@ -34,11 +34,13 @@ class Module implements DependencyIndicatorInterface {
                 'AuthenticationFactory'                     => function (ServiceLocatorInterface $sm) {
                     /**
                      * @var \DoctrineModule\Authentication\Adapter\ObjectRepository $adapter
+                     * @var \Zend\Mvc\Application                                   $application
                      */
 
-                    $config     = $this->getConfig();
-                    $baseConfig = $config['belcebur']['belcebur-auth'];
-                    $service    = new AuthenticationFactory($sm);
+                    $application = $sm->get('Application');
+                    $config      = $application->getConfig();
+                    $baseConfig  = $config['belcebur']['belcebur-auth'];
+                    $service     = new AuthenticationFactory($sm);
 
                     /**
                      * Config Factories
