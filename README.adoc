@@ -30,7 +30,7 @@ return array(
                     'identity_class'      => 'Application\Entity\User',
                     'identity_property'   => 'email',
                     'credential_property' => 'password',
-                    'credentialCallable'  => function ($password) {
+                    'credentialCallable'  => function (\Application\Entity\User $entity, $password) {
                         return md5($password);
                     }
                 ));
@@ -41,7 +41,7 @@ return array(
                       'identity_class'      => 'Application\Entity\Member',
                       'identity_property'   => 'username',
                       'credential_property' => 'password',
-                      'credentialCallable'  => function ($password) {
+                      'credentialCallable'  => function (\Application\Entity\Member $entity,$password) {
                           return md5($password);
                       }
                   ));
@@ -73,7 +73,7 @@ return array(
                          'identity_class'      => 'Application\Entity\User',
                          'identity_property'   => 'email',
                          'credential_property' => 'password',
-                         'credentialCallable'  => function ($password) {
+                         'credentialCallable'  => function (\Application\Entity\User $entity,$password) {
                              return md5($password);
                          }
                      )
