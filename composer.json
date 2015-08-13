@@ -1,5 +1,6 @@
 {
   "name": "belcebur/belcebur-auth",
+  "version": "1.0.0",
   "type": "library",
   "description": "Doctrine2 multiple authentification",
   "keywords": [
