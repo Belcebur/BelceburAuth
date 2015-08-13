@@ -3,9 +3,18 @@ namespace BelceburAuth;
 
 use BelceburAuth\Service\AuthenticationFactory;
 use DoctrineModule\Authentication\Adapter\ObjectRepository;
+use Zend\ModuleManager\Feature\DependencyIndicatorInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class Module {
+class Module implements DependencyIndicatorInterface {
+
+    public function getModuleDependencies() {
+        return array(
+            'DoctrineModule',
+            'DoctrineORMModule',
+        );
+    }
+
     public function getAutoloaderConfig() {
         return array(
             'Zend\Loader\StandardAutoloader' => array(
