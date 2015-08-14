@@ -2,6 +2,15 @@
 
 '''
 
+== Install from composer / Instalar desde Composer
+
+composer require belcebur/belcebur-auth
+
+Packagist: https://packagist.org/packages/belcebur/belcebur-auth
+
+GitHub: https://github.com/Belcebur/BelceburAuth
+
+
 == Configure Adapters / Configurar Adaptadores
 
 === Service Manager
@@ -35,7 +44,7 @@ return array(
                     }
                 ));
             },
-            'serviceName2' => => function (\Zend\ServiceManager\ServiceLocatorInterface $sm) {
+            'serviceName2' => function (\Zend\ServiceManager\ServiceLocatorInterface $sm) {
                   return new \DoctrineModule\Authentication\Adapter\ObjectRepository(array(
                       'object_manager'      => $sm->get('Doctrine\ORM\EntityManager'),
                       'identity_class'      => 'Application\Entity\Member',
