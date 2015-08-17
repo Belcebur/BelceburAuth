@@ -1,6 +1,5 @@
 {
   "name": "belcebur/belcebur-auth",
-  "version": "1.0.1",
   "type": "library",
   "description": "Doctrine2 multiple authentification",
   "keywords": [
@@ -21,8 +20,11 @@
   ],
   "license": "Apache-2.0",
   "require": {
-    "zendframework/zendframework": "2.*",
-    "doctrine/doctrine-orm-module": "0.*"
+    "zendframework/zendframework": "2.*"
+  },
+  "suggest": {
+    "gedmo/doctrine-extensions": "Multiple Doctrine Extensions",
+    "belcebur/belcebur-basic": "Basic Tools from ZF2 + Doctrine + Gedmo Extension / Utilidades varias para ZF2 + Doctrine + Gedmo "
   },
   "autoload": {"classmap": ["./Module.php"]}
 }
