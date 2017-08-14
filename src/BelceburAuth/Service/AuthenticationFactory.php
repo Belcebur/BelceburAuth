@@ -10,12 +10,15 @@ namespace BelceburAuth\Service;
 
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
 use DoctrineModule\Authentication\Adapter\ObjectRepository as Adapter;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Zend\Authentication\AuthenticationService;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\ServiceManager;
 
-class AuthenticationFactory extends AuthenticationService {
+class AuthenticationFactory extends AuthenticationService
+{
 
 
     /**
@@ -32,20 +35,22 @@ class AuthenticationFactory extends AuthenticationService {
      */
     private $sm;
 
-    function __construct(ServiceLocatorInterface $sm) {
+    function __construct(ServiceLocatorInterface $sm)
+    {
         /**
          * @var \Zend\ServiceManager\ServiceManager $sm
-         * @var \Zend\Mvc\Application               $application
+         * @var \Zend\Mvc\Application $application
          */
-        $this->sm           = $sm;
+        $this->sm = $sm;
         $this->authAdapters = new ArrayCollection();
-        $this->authStorage  = new ArrayCollection();
+        $this->authStorage = new ArrayCollection();
     }
 
     /**
      * @param Adapter $authAdapter
      */
-    public function addAuthAdapter($authAdapter) {
+    public function addAuthAdapter($authAdapter)
+    {
         if (!$this->getAuthAdapters()->contains($authAdapter)) {
             $this->authAdapters->add($authAdapter);
         }
@@ -54,7 +59,8 @@ class AuthenticationFactory extends AuthenticationService {
     /**
      * @return ArrayCollection
      */
-    public function getAuthAdapters() {
+    public function getAuthAdapters(): ArrayCollection
+    {
         return $this->authAdapters;
     }
 
@@ -63,19 +69,13 @@ class AuthenticationFactory extends AuthenticationService {
      *
      * @return Adapter
      */
-    public function getAuthAdapter($identityClass) {
-
+    public function getAuthAdapter($identityClass)
+    {
         $identityClassName = is_object($identityClass) ? get_class($identityClass) : $identityClass;
-
-
         return $this->getAuthAdapters()->filter(function (Adapter $adapter) use ($identityClassName) {
-            /**
-             * @var \DoctrineModule\Options\Authentication $options
-             */
-
-            $return  = FALSE;
+            $return = FALSE;
             $options = $adapter->getOptions();
-            if ($options->getIdentityClass() == $identityClassName) {
+            if ($options->getIdentityClass() === $identityClassName) {
                 $return = TRUE;
             }
 
@@ -88,44 +88,47 @@ class AuthenticationFactory extends AuthenticationService {
      * @param AdapterInterface $adapter
      *
      * @return null|\Zend\Authentication\Result
+     * @throws \Zend\Authentication\Exception\RuntimeException
      */
-    public function authenticate(AdapterInterface $adapter = NULL) {
+    public function authenticate(AdapterInterface $adapter = NULL)
+    {
 
         if (!$adapter && $this->getAuthAdapters()->count()) {
             $adapter = $this->getAuthAdapters()->first();
         } elseif (!$adapter) {
             return NULL;
         }
-        $result = parent::authenticate($adapter);
-
-        return $result;
+        return parent::authenticate($adapter);
     }
 
     /**
      * @return ArrayCollection
      */
-    public function getAuthStorage() {
+    public function getAuthStorage(): ArrayCollection
+    {
         return $this->authStorage;
     }
 
     /**
-     * @return mixed|null|object
+     * @return mixed|null
+     * @throws \Zend\ServiceManager\Exception\ServiceNotFoundException
      */
-    public function getIdentity() {
+    public function getIdentity()
+    {
         $identity = parent::getIdentity();
         if ($identity) {
             /**
-             * @var \Doctrine\ORM\EntityManager         $em
+             * @var \Doctrine\ORM\EntityManager $em
              * @var \Doctrine\ORM\Mapping\ClassMetadata $meta
              */
-            $em             = $this->getSm()->get('Doctrine\ORM\EntityManager');
-            $meta           = $em->getClassMetadata(get_class($identity));
+            $em = $this->getSm()->get(EntityManager::class);
+            $meta = $em->getClassMetadata(get_class($identity));
             $identifierName = current($meta->getIdentifier());
 
-            $methodName = "get" . ucfirst($identifierName);
+            $methodName = 'get' . ucfirst($identifierName);
             if (method_exists($identity, $methodName)) {
-                $identityValue = call_user_func(array($identity, $methodName));
-                $identity      = $em->getRepository(get_class($identity))->find($identityValue);
+                $identityValue = $identity->$methodName();
+                $identity = $em->getRepository(get_class($identity))->find($identityValue);
             } else {
                 $identity = $em->getRepository(get_class($identity))->find($identity->$identifierName);
             }
@@ -137,7 +140,8 @@ class AuthenticationFactory extends AuthenticationService {
     /**
      * @return \Zend\ServiceManager\ServiceManager
      */
-    public function getSm() {
+    public function getSm(): ServiceManager
+    {
         return $this->sm;
     }
 
